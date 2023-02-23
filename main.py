@@ -1,10 +1,17 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 
-df = pd.read_csv('london_cocoa.csv')
 
-print(df.head())
+def sma(data, window):
+    sma = data.rolling(window = window).mean()
+    return sma
 
-df[['date', 'close']].plot()
-df.plot()
-plt.show()
+
+df = pd.read_csv('london_cocoa.csv', parse_dates=True, dayfirst=True, index_col='date').sort_index()
+
+for col in df.columns:
+    df[col] = df[col].fillna(method='ffill')
+
+df.reset_index(inplace=True)
+
+df['sma_20'] = sma(df['close'], 20)
+df.tail()
